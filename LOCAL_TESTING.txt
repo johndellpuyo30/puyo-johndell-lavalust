@@ -1,0 +1,26 @@
+PUYO LAVALUST - LOCAL TESTING
+
+1. Extract the project into Laragon's www folder.
+   Example:
+   C:\laragon\www\Puyo_Lavalust
+
+2. Start Apache in Laragon.
+
+3. Open Student Home first. Either of these can work depending on your Laragon setup:
+   http://localhost/Puyo_Lavalust/student
+   http://localhost/Puyo_Lavalust/public/student
+
+   If you placed the project contents directly inside C:\laragon\www, use:
+   http://localhost/student
+
+4. From Student Home, click Student Profile.
+
+5. Middleware test:
+   - Open a new Incognito/Private browser window.
+   - Enter the profile URL directly BEFORE opening Student Home.
+   - StudentMiddleware should redirect you to Student Home and display an access-denied notice.
+   - After Student Home loads, Student Profile becomes accessible in that browser session.
+
+Required routes remain:
+/student
+/student/profile
