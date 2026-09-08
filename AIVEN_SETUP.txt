@@ -1,0 +1,52 @@
+PUYO LAVALUST - AIVEN READY
+===========================
+
+This package has been prepared to connect LavaLust to Aiven MySQL using SSL.
+The supplied Aiven CA certificate is already included as: ca.pem
+
+FILES ADDED / UPDATED
+---------------------
+1. ca.pem
+   - Aiven CA certificate used by PDO MySQL SSL.
+
+2. .env.aiven.example
+   - Aiven-specific environment template.
+   - Copy it to .env and replace the Aiven host, port, and password.
+
+3. app/config/database.php
+   - Reads Aiven connection values from environment variables.
+   - Supports DB_USER/DB_USERNAME and DB_NAME/DB_DATABASE.
+   - Loads DB_SSL_CA.
+
+4. scheme/database/Database.php
+   - Enables PDO MySQL SSL using the CA certificate.
+   - Compatible with newer Pdo\Mysql constants and older PDO MySQL constants.
+
+5. Aiven_mydb.sql
+   - Ready-to-run users table + five required sample records.
+
+AIVEN VALUES TO COPY
+--------------------
+From Aiven > MySQL service > Overview / Connection Information:
+DB_HOST     = Aiven Host
+DB_PORT     = Aiven Port
+DB_USER     = avnadmin (or your shown username)
+DB_PASSWORD = Aiven Password
+DB_NAME     = mydb
+DB_SSL_CA   = ca.pem
+
+IMPORTANT
+---------
+- Do not commit your real .env file to GitHub.
+- .env is already ignored by .gitignore.
+- Do not upload screenshots that expose your Aiven password.
+
+NAVICAT
+-------
+Use the same Host, Port, Username, and Password.
+Enable SSL and choose ca.pem as the CA Certificate.
+
+DATABASE
+--------
+Create/select `mydb`, then run Aiven_mydb.sql.
+After that, your /users route can retrieve the records from Aiven once the .env values are filled in.

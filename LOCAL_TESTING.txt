@@ -1,0 +1,69 @@
+PUYO LAVALUST - LOCAL TESTING
+
+1. Extract the project into Laragon's www folder.
+   Example:
+   C:\laragon\www\Puyo_Lavalust
+
+2. Start Apache in Laragon.
+
+3. Open Student Home:
+   http://localhost/Puyo_Lavalust/student
+   or, depending on your Laragon setup:
+   http://localhost/Puyo_Lavalust/public/student
+
+4. Normal protected-profile test:
+   - Open Student Home.
+   - Click "Open Protected Profile" or "Student Profile".
+   - StudentMiddleware validates the request and opens /student/profile.
+
+5. Direct-access warning test:
+   - Type /student/profile directly in the browser address bar.
+   - Do not use the protected-profile button/link from Student Home.
+   - StudentMiddleware redirects to /student.
+   - A warning appears:
+     "Warning: Direct access to the Student Profile is not allowed. Please open the protected profile from Student Home first."
+
+6. Repeat the direct-access test after viewing the profile.
+   - Directly typing /student/profile is still blocked.
+   - Access is granted only through the protected-profile action on Student Home.
+
+Required activity routes:
+/student
+/student/profile
+
+Required files used in the activity:
+app/config/routes.php
+app/config/middleware.php
+app/controllers/StudentController.php
+app/middlewares/StudentMiddleware.php
+app/views/student/student_home.php
+app/views/student/student_profile.php
+
+LABORATORY EXERCISE NO. 4 - DATABASE AND MVC
+
+1. Start Apache and MySQL in Laragon.
+
+2. Import mydb.sql using phpMyAdmin, HeidiSQL, or MySQL Workbench.
+   This creates the mydb database, users table, and five sample records.
+
+3. The local database defaults are:
+   Host: localhost
+   Port: 3306
+   Username: root
+   Password: blank
+   Database: mydb
+
+4. If your MySQL credentials are different, update the DB_* environment values or app/config/database.php.
+
+5. Open the users page:
+   http://localhost/Puyo_Lavalust/users
+   or, depending on your Laragon setup:
+   http://localhost/Puyo_Lavalust/public/users
+
+Lab 4 files:
+app/config/database.php
+app/config/routes.php
+app/models/UsersModel.php
+app/controllers/UsersController.php
+app/views/users.php
+mydb.sql
