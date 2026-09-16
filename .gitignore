@@ -1,16 +1,19 @@
-# macOS
+# OS
 .DS_Store
+Thumbs.db
 
-# Environment
+# Local / private environment
 .env
+.env.*
 !.env.example
+!.env.aiven.example
 
 # Dependencies
 vendor/
 app/vendor/
 composer.lock
 
-# Cache & Logs
+# Cache & logs
 runtime/*
 !runtime/.htaccess
 !runtime/index.html
@@ -21,6 +24,3 @@ runtime/*
 .idea/
 .vscode/
 *.sublime-*
-
-# OS
-Thumbs.db

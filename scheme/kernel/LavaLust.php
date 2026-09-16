@@ -62,6 +62,12 @@ if (file_exists(ROOT_DIR . '.env')) {
             $value = substr($value, 1, -1);
         }
 
+        // Server/container environment variables take priority over local .env values.
+        $existing = getenv($key);
+        if ($existing !== false && $existing !== '') {
+            continue;
+        }
+
         putenv("$key=$value");
         $_ENV[$key] = $_SERVER[$key] = $value;
     }
