@@ -1,0 +1,2 @@
+<?php
+class Add_api_auth_fields {public function up(){$d=lava_instance()->db;$c=$d->raw('SHOW COLUMNS FROM users')->fetchAll(PDO::FETCH_COLUMN);if(!in_array('password',$c))$d->raw('ALTER TABLE users ADD password VARCHAR(255) NULL');if(!in_array('role',$c))$d->raw("ALTER TABLE users ADD role VARCHAR(20) NOT NULL DEFAULT 'user'");}public function down(){/* Retain existing accounts. */}}

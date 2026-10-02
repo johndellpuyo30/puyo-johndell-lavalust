@@ -1,0 +1,29 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Local / private environment
+.env
+.env.*
+!.env.example
+!.env.aiven.example
+
+# Dependencies
+vendor/
+app/vendor/
+composer.lock
+
+# Cache & logs
+runtime/*
+!runtime/.htaccess
+!runtime/index.html
+*.log
+*.cache
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+node_modules/
+frontend/dist/

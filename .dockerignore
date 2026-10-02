@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+!.env.aiven.example
+*.log
+runtime/*
+!runtime/.htaccess
+!runtime/index.html
+
+node_modules/
+frontend/
+frontend/dist/
