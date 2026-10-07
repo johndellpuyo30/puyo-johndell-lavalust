@@ -1,3 +1,120 @@
 <?php
 defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
-class MigrationController extends Controller {public function __construct(){if(PHP_SAPI!=='cli'){http_response_code(404);exit;}parent::__construct();$this->call->library('migration');}public function migrate(){$this->migration->migrate();}public function status(){$this->migration->status();}public function rollback(){$this->migration->rollback();}public function rollback_all(){$this->migration->rollback_all();}public function refresh(){$this->migration->refresh();}public function create_migration($name){if(!preg_match('/^[a-z][a-z0-9_]*$/D',$name)){fwrite(STDERR,"Use a snake_case name.\n");exit(1);}$this->migration->create_migration($name);}public function seed(){$n=getenv('LAB6_ADMIN_USERNAME')?:'';$p=getenv('LAB6_ADMIN_PASSWORD')?:'';if($n===''||strlen($n)>100||strlen($p)<12){fwrite(STDERR,"Set LAB6_ADMIN_USERNAME and LAB6_ADMIN_PASSWORD (12+ chars) privately.\n");exit(1);}$u=$this->db->raw('SELECT id FROM users WHERE username=?',[$n])->fetch(PDO::FETCH_ASSOC);if($u){echo "Username exists; no changes made.\n";return;}$this->db->raw('INSERT INTO users (firstname,lastname,email,username,password,role) VALUES (?,?,?,?,?,?)',['Lab','Administrator',$n.'@example.invalid',$n,password_hash($p,PASSWORD_DEFAULT),'admin']);echo "Lab 6 administrator created.\n";}public function set_password($username){if(!preg_match('/^[A-Za-z0-9_.-]{1,100}$/D',$username)){fwrite(STDERR,"Invalid username.\n");exit(1);}$hash=getenv('LAB6_PASSWORD_HASH')?:'';if(!preg_match('/^\$2[ayb]\$\d{2}\$[.\/A-Za-z0-9]{53}$/D',$hash)){fwrite(STDERR,"Password update was not authorized by the CLI command.\n");exit(1);}$user=$this->db->raw('SELECT id FROM users WHERE username=? LIMIT 1',[$username])->fetch(PDO::FETCH_ASSOC);if(!$user){fwrite(STDERR,"User not found.\n");exit(1);}$this->db->raw('UPDATE users SET password=? WHERE id=?',[$hash,$user['id']]);$this->db->raw('DELETE FROM refresh_tokens WHERE user_id=?',[$user['id']]);echo "Password updated for {$username}; existing sessions were signed out.\n";}}
+
+class MigrationController extends Controller
+{
+    public function __construct()
+    {
+        if (PHP_SAPI !== 'cli') {
+            http_response_code(404);
+            exit;
+        }
+
+        parent::__construct();
+        $this->call->library('migration');
+    }
+
+    /* ==========================================
+       MIGRATION COMMANDS
+       ========================================== */
+
+    public function migrate()
+    {
+        $this->migration->migrate();
+    }
+
+    public function status()
+    {
+        $this->migration->status();
+    }
+
+    public function rollback()
+    {
+        $this->migration->rollback();
+    }
+
+    public function rollback_all()
+    {
+        $this->migration->rollback_all();
+    }
+
+    public function refresh()
+    {
+        $this->migration->refresh();
+    }
+
+    public function create_migration($name)
+    {
+        if (!preg_match('/^[a-z][a-z0-9_]*$/D', $name)) {
+            fwrite(STDERR, "Use a snake_case name.\n");
+            exit(1);
+        }
+
+        $this->migration->create_migration($name);
+    }
+
+    /* ==========================================
+       SEEDING & ACCOUNT MANAGEMENT
+       ========================================== */
+
+    public function seed()
+    {
+        $n = getenv('LAB6_ADMIN_USERNAME') ?: '';
+        $p = getenv('LAB6_ADMIN_PASSWORD') ?: '';
+
+        if ($n === '' || strlen($n) > 100 || strlen($p) < 12) {
+            fwrite(STDERR, "Set LAB6_ADMIN_USERNAME and LAB6_ADMIN_PASSWORD (12+ chars) privately.\n");
+            exit(1);
+        }
+
+        $u = $this->db->raw('SELECT id FROM users WHERE username = ?', [$n])
+                      ->fetch(PDO::FETCH_ASSOC);
+
+        if ($u) {
+            echo "Username exists; no changes made.\n";
+            return;
+        }
+
+        $this->db->raw(
+            'INSERT INTO users (firstname, lastname, email, username, password, role) VALUES (?, ?, ?, ?, ?, ?)',
+            [
+                'Lab',
+                'Administrator',
+                $n . '@example.invalid',
+                $n,
+                password_hash($p, PASSWORD_DEFAULT),
+                'admin'
+            ]
+        );
+
+        echo "Lab 6 administrator created.\n";
+    }
+
+    public function set_password($username)
+    {
+        if (!preg_match('/^[A-Za-z0-9_.-]{1,100}$/D', $username)) {
+            fwrite(STDERR, "Invalid username.\n");
+            exit(1);
+        }
+
+        $hash = getenv('LAB6_PASSWORD_HASH') ?: '';
+
+        if (!preg_match('/^\$2[ayb]\$\d{2}\$[.\/A-Za-z0-9]{53}$/D', $hash)) {
+            fwrite(STDERR, "Password update was not authorized by the CLI command.\n");
+            exit(1);
+        }
+
+        $user = $this->db->raw('SELECT id FROM users WHERE username = ? LIMIT 1', [$username])
+                         ->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            fwrite(STDERR, "User not found.\n");
+            exit(1);
+        }
+
+        $this->db->raw('UPDATE users SET password = ? WHERE id = ?', [$hash, $user['id']]);
+        $this->db->raw('DELETE FROM refresh_tokens WHERE user_id = ?', [$user['id']]);
+
+        echo "Password updated for {$username}; existing sessions were signed out.\n";
+    }
+}
